@@ -65,7 +65,7 @@ with tab1:
             fig_region_fast = px.bar(region_kpi.sort_values('Avg_Lead_Time').head(3), x='Avg_Lead_Time', y='Route__Region', title='Fastest Route -Region Level', orientation='h')
             st.plotly_chart(fig_region_fast, use_container_width=True)
         with col2:
-            fig_region_eff = px.bar(region_kpi.sort_values('Route_Efficiency_Score', ascending=False).head(3), x='Route_Efficiency_Score', y='Route__Region', title='Top Efficient Regions', orientation='h')
+            fig_region_eff = px.scatter(region_kpi, x="Route_Volume", y="Avg_Lead_Time", size="Route_Volume", color="Route_Efficiency_Score", title='Route Efficiency Analysis', hover_name = 'Route__Region')
             st.plotly_chart(fig_region_eff, use_container_width=True)
     with subtab2:
         st.subheader("State-Level Route Efficiency")
@@ -74,12 +74,13 @@ with tab1:
             fig_state_fast = px.bar(state_kpi.sort_values('Avg_Lead_Time').head(10), x='Avg_Lead_Time', y='Route__State', title='Fastest Route - State Level', orientation='h')
             st.plotly_chart(fig_state_fast, use_container_width=True)
         with col2:
-            fig_state_eff = px.bar(state_kpi.sort_values('Route_Efficiency_Score', ascending=False).head(10), x='Route_Efficiency_Score', y='Route__State', title='Top Efficient States', orientation='h')
+            fig_state_eff = px.scatter(state_kpi, x="Route_Volume", y="Avg_Lead_Time", size="Route_Volume", color="Route_Efficiency_Score", title='State Efficiency Analysis', hover_name = 'Route__State')
             st.plotly_chart(fig_state_eff, use_container_width=True)
 #Geographic Shipping Map
 with tab2:
     st.subheader("🌍 Geographic Analysis - Shipping Efficiency")
-    fig = px.scatter_mapbox(state_kpi_merge,lat="Lat",lon="Lon",size="Route_Volume",color="Route_Efficiency_Score",hover_name="State_Name",hover_data={"Route_Volume": True,"Avg_Lead_Time": True,"Route_Efficiency_Score": True},zoom=3,height=600,color_continuous_scale="RdYlGn")
+    fig = px.scatter_mapbox(state_kpi_merge,lat="Lat",lon="Lon",size="Route_Volume",color="Route_Efficiency_Score",text="State_Code",hover_name="State_Code",hover_data={"State_Name": True,"Route_Volume": True,"Avg_Lead_Time": True,"Route_Efficiency_Score": True},zoom=3,height=600,color_continuous_scale="RdYlGn", size_max=35)
+    fig.update_traces(textposition='top center', marker=dict(opacity=0.8))
     fig.update_layout(mapbox_style="carto-positron")
     st.plotly_chart(fig, use_container_width=True)
     subtab1, subtab2 = st.tabs(["🌍 Region Level", "📍 State Level"])
@@ -105,12 +106,20 @@ with tab3:
         state_bottlenecks = state_kpi[(state_kpi['Route_Volume'] > state_kpi['Route_Volume'].quantile(0.75)) & (state_kpi['Delay_Frequency_StateLevel'] > state_kpi['Delay_Frequency_StateLevel'].quantile(0.75))]
         fig = px.scatter(state_bottlenecks, x='Route_Volume', y='Delay_Frequency_StateLevel', size='Avg_Lead_Time', color='Route__State', title='State Bottlenecks')
         st.plotly_chart(fig, use_container_width=True)
+#Delay composition 
+    delay_counts= filtered_df['Is_Delayed'].value_counts().reset_index()
+    delay_counts.columns = ['Is_Delayed', 'Count']
+    fig = px.pie(delay_counts, names='Is_Delayed', values='Count', title='Delayed vs On-time Shipments' , hole=0.5)
+    st.plotly_chart(fig, use_container_width=True)
 #Ship Mode Comparison
 with tab4:
     st.header("🚚 Ship Mode Performance")
     ship_mode_analysis= filtered_df.groupby('Ship Mode').agg(Average_Lead_Time=('Lead Time', 'mean'), Delay_Frequency=('Is_Delayed', 'mean'), Total_Shipments=('Order ID', 'count')).reset_index()
     ship_mode_analysis['Delay_Frequency'] = ship_mode_analysis['Delay_Frequency'] * 100
-    fig = px.bar(ship_mode_analysis, x='Ship Mode', y=['Average_Lead_Time', 'Delay_Frequency'], title='Ship Mode Performance', barmode='group')
+    fig = px.box(ship_mode_analysis, x='Ship Mode', y=['Average_Lead_Time', 'Delay_Frequency'], title='Ship Mode Performance', barmode='group')
+    st.plotly_chart(fig, use_container_width=True)
+    #Lead Time Distribution by Ship Mode
+    fig = px.histogram(filtered_df, x='Lead Time', color='Ship Mode', title='Lead Time Distribution by Ship Mode', nbins=30, barmode='overlay')
     st.plotly_chart(fig, use_container_width=True)
 #Route Drill-Down
 with tab5:
@@ -119,10 +128,22 @@ with tab5:
     with subtab1:
         selected_region = st.selectbox("Select Region", df['Region'].unique())
         region_data = filtered_df[filtered_df['Region'] == selected_region]
-        fig=px.histogram(region_data, x='Lead Time', title=f'Lead Time Distribution - {selected_region}')
+        fig=px.line(region_data, x='Order Date', y='Lead Time', title=f'Shipment timeline - {selected_region}')
         st.plotly_chart(fig, use_container_width=True)
     with subtab2:
         selected_state = st.selectbox("Select State", df['State/Province'].unique())
         state_data = filtered_df[filtered_df['State/Province'] == selected_state]
-        fig=px.histogram(state_data, x='Lead Time', title=f'Lead Time Distribution - {selected_state}')
+        fig=px.line(state_data, x='Order Date', y='Lead Time', title=f'Shipment timeline - {selected_state}')
+        st.plotly_chart(fig, use_container_width=True)
+#Correlation Insight
+with tab5:
+    with subtab1:
+        st.subheader("Correlation Analysis - Region Level")
+        region_corr = region_kpi[['Avg_Lead_Time', 'Route_Volume', 'Delay_Frequency_RegionLevel', 'Route_Efficiency_Score']].corr()
+        fig = px.imshow(region_corr, text_auto=True, title='Region KPI Correlation Matrix')
+        st.plotly_chart(fig, use_container_width=True)
+    with subtab2:
+        st.subheader("Correlation Analysis - State Level")
+        state_corr = state_kpi[['Avg_Lead_Time', 'Route_Volume', 'Delay_Frequency_StateLevel', 'Route_Efficiency_Score']].corr()
+        fig = px.imshow(state_corr, text_auto=True, title='State KPI Correlation Matrix')
         st.plotly_chart(fig, use_container_width=True)
