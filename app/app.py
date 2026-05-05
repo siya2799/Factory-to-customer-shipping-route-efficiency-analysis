@@ -55,7 +55,7 @@ with tab1:
         st.subheader("Region-Level Route Efficiency")
         col1, col2 = st.columns(2)
         with col1:
-            fig_region_fast = px.bar(region_kpi.sort_values('Avg_Lead_Time').head(3), x='Average Lead Time', y='Route__Region', title='Fastest Route -Region Level', orientation='h')
+            fig_region_fast = px.bar(region_kpi.sort_values('Avg_Lead_Time').head(3), x='Avg_Lead_Time', y='Route__Region', title='Fastest Route -Region Level', orientation='h')
             st.plotly_chart(fig_region_fast, use_container_width=True)
         with col2:
             fig_region_eff = px.bar(region_kpi.sort_values('Route_Efficiency_Score', ascending=False).head(3), x='Route_Efficiency_Score', y='Route__Region', title='Top Efficient Regions', orientation='h')
@@ -64,7 +64,7 @@ with tab1:
         st.subheader("State-Level Route Efficiency")
         col1, col2 = st.columns(2)
         with col1:
-            fig_state_fast = px.bar(state_kpi.sort_values('Avg_Lead_Time').head(10), x='Average Lead Time', y='Route__State', title='Fastest Route - State Level', orientation='h')
+            fig_state_fast = px.bar(state_kpi.sort_values('Avg_Lead_Time').head(10), x='Avg_Lead_Time', y='Route__State', title='Fastest Route - State Level', orientation='h')
             st.plotly_chart(fig_state_fast, use_container_width=True)
         with col2:
             fig_state_eff = px.bar(state_kpi.sort_values('Route_Efficiency_Score', ascending=False).head(10), x='Route_Efficiency_Score', y='Route__State', title='Top Efficient States', orientation='h')
