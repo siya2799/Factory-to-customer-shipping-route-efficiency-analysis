@@ -7,11 +7,11 @@ st.title("🚚 Shipping Route Efficiency Dashboard")
 #Load Data
 @st.cache_data
 def load_data():
-    df = pd.read_csv(r"Data\Nassau Candy Distributor.csv")
-    region_kpi = pd.read_csv(r"Data\Region_KPI_table.csv")
-    state_kpi = pd.read_csv(r"Data\State_KPI_table.csv")
-    state_mapping = pd.read_csv(r"Data\State_Mapping.csv")
-    state_mapping_with_coords = pd.read_csv(r"Data\State_Mapping_with_Coords.csv")
+    df = pd.read_csv("Data/Nassau Candy Distributor.csv")
+    region_kpi = pd.read_csv("Data/Region_KPI_table.csv")
+    state_kpi = pd.read_csv("Data/State_KPI_table.csv")
+    state_mapping = pd.read_csv("Data/State_Mapping.csv")
+    state_mapping_with_coords = pd.read_csv("Data/State_Mapping_with_Coords.csv")
     return df, region_kpi, state_kpi, state_mapping , state_mapping_with_coords
 df, region_kpi, state_kpi, state_mapping, state_mapping_with_coords = load_data()
 #Sidebar Filters
