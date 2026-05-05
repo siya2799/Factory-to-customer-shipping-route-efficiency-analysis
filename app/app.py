@@ -11,7 +11,7 @@ def load_data():
     region_kpi = pd.read_csv("Data/Region_KPI_table.csv")
     state_kpi = pd.read_csv("Data/State_KPI_table.csv")
     state_mapping = pd.read_csv("Data/State_Mapping.csv")
-    state_mapping_with_coords = pd.read_csv("Data/State_Mapping_with_Coords.csv")
+    state_mapping_with_coords = pd.read_csv("Data/state_mapping_with_coords.csv")
     return df, region_kpi, state_kpi, state_mapping , state_mapping_with_coords
 df, region_kpi, state_kpi, state_mapping, state_mapping_with_coords = load_data()
 #Sidebar Filters
