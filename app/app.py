@@ -131,7 +131,7 @@ with tab4:
     st.header("🚚 Ship Mode Performance")
     ship_mode_analysis= filtered_df.groupby('Ship Mode').agg(Average_Lead_Time=('Lead Time', 'mean'), Delay_Frequency=('Is_Delayed', 'mean'), Total_Shipments=('Order ID', 'count')).reset_index()
     ship_mode_analysis['Delay_Frequency'] = ship_mode_analysis['Delay_Frequency'] * 100
-    fig = px.box(ship_mode_analysis, x='Ship Mode', y=['Average_Lead_Time', 'Delay_Frequency'], title='Ship Mode Performance', barmode='group')
+    fig = px.box(ship_mode_analysis, x='Ship Mode', y=['Average_Lead_Time', 'Delay_Frequency'], title='Ship Mode Performance')
     st.plotly_chart(fig, use_container_width=True)
     #Lead Time Distribution by Ship Mode
     fig = px.histogram(filtered_df, x='Lead Time', color='Ship Mode', title='Lead Time Distribution by Ship Mode', nbins=30, barmode='overlay')
