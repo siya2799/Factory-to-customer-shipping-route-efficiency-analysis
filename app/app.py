@@ -42,8 +42,8 @@ if ship_mode:
 if Lead_time:
     filtered_df = filtered_df[(filtered_df['Lead Time'] >= Lead_time[0]) & (filtered_df['Lead Time'] <= Lead_time[1])]
 #Merging state KPI table with state mapping for geographic visualizations
-state_kpi['State_Name'] = state_kpi['Route_State'].str.split(' → ').str[-1]
-state_kpi['Country'] = state_kpi['Route_State'].str.split(' → ').str[0]
+state_kpi['State_Name'] = state_kpi['Route__State'].str.split(' → ').str[-1]
+state_kpi['Country'] = state_kpi['Route__State'].str.split(' → ').str[0]
 state_kpi_merge = state_kpi.merge(state_mapping_with_coords[['State/Province', 'Country', 'Lat', 'Lon']],left_on=['State_Name', 'Country'],right_on=['State/Province', 'Country'],how='left')
 #Dashboard
 tab1, tab2 , tab3, tab4 , tab5 = st.tabs(["📊 Route Efficiency","🌍 Geographic Analysis", "🚨 Bottleneck Analysis","🚚 Ship Mode Performance","🔍 Route Drill-Down Analysis"])
