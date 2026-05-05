@@ -17,8 +17,9 @@ df, region_kpi, state_kpi, state_mapping, state_mapping_with_coords = load_data(
 #Sidebar Filters
 st.sidebar.header("Filter")
 #Converting for filters
-df['Order Date'] = pd.to_datetime(df['Order Date'])
-df['Ship Date'] = pd.to_datetime(df['Ship Date'])
+df['Order Date'] = pd.to_datetime(df['Order Date'], errors='coerce', dayfirst=True)
+df['Ship Date'] = pd.to_datetime(df['Ship Date'], errors='coerce', dayfirst=True)
+df = df.dropna(subset=['Order Date'])
 df['Lead Time'] = (df['Ship Date'] - df['Order Date']).dt.days
 #Date filter
 date_range = st.sidebar.date_input("Select Date Range", value = [df['Order Date'].min().date(), df['Order Date'].max().date()])
