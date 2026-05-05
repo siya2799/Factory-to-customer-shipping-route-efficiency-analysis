@@ -42,7 +42,7 @@ if ship_mode:
 if Lead_time:
     filtered_df = filtered_df[(filtered_df['Lead Time'] >= Lead_time[0]) & (filtered_df['Lead Time'] <= Lead_time[1])]
 #Defining delayed shipments for filtered df
-filtered_df['Lead_Time'] = (filtered_df['Ship_Date'] - filtered_df['Order_Date']).dt.days
+filtered_df['Lead_Time'] = (filtered_df['Ship Date'] - filtered_df['Order Date']).dt.days
 threshold = filtered_df['Lead_Time'].quantile(0.75)
 filtered_df['Is_Delayed'] = filtered_df['Lead_Time'] > threshold 
 #Merging state KPI table with state mapping for geographic visualizations
