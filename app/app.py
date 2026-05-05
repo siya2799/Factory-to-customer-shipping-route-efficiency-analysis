@@ -45,6 +45,9 @@ if Lead_time:
 state_kpi['State_Name'] = state_kpi['Route__State'].str.split(' → ').str[-1]
 state_kpi['Country'] = state_kpi['Route__State'].str.split(' → ').str[0]
 state_kpi_merge = state_kpi.merge(state_mapping_with_coords[['State/Province', 'Country', 'Lat', 'Lon']],left_on=['State_Name', 'Country'],right_on=['State/Province', 'Country'],how='left')
+state_kpi_merge['Lat'] = pd.to_numeric(state_kpi_merge['Lat'], errors='coerce')
+state_kpi_merge['Lon'] = pd.to_numeric(state_kpi_merge['Lon'], errors='coerce')
+state_kpi_merge = state_kpi_merge.dropna(subset=['Lat', 'Lon'])
 #Dashboard
 tab1, tab2 , tab3, tab4 , tab5 = st.tabs(["📊 Route Efficiency","🌍 Geographic Analysis", "🚨 Bottleneck Analysis","🚚 Ship Mode Performance","🔍 Route Drill-Down Analysis"])
 #Route Efficiency Overview
@@ -72,7 +75,7 @@ with tab1:
 #Geographic Shipping Map
 with tab2:
     st.subheader("🌍 Geographic Analysis - Shipping Efficiency")
-    fig = px.scatter_mapbox(state_kpi_merge,lat="Lat",lon="Lon",size="Route_Volume",color="Route_Efficiency_Score",hover_name="State_Name",hover_data={"Route_Volume": True,"Average_Lead_Time": True,"Route_Efficiency_Score": True},zoom=3,height=600,color_continuous_scale="RdYlGn")
+    fig = px.scatter_mapbox(state_kpi_merge,lat="Lat",lon="Lon",size="Route_Volume",color="Route_Efficiency_Score",hover_name="State_Name",hover_data={"Route_Volume": True,"Avg_Lead_Time": True,"Route_Efficiency_Score": True},zoom=3,height=600,color_continuous_scale="RdYlGn")
     fig.update_layout(mapbox_style="carto-positron")
     st.plotly_chart(fig, use_container_width=True)
     subtab1, subtab2 = st.tabs(["🌍 Region Level", "📍 State Level"])
