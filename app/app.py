@@ -17,7 +17,7 @@ df, region_kpi, state_kpi, state_mapping, state_mapping_with_coords = load_data(
 #Sidebar Filters
 st.sidebar.header("Filter")
 #Date filter
-date_range = st.sidebar.date_input("Select Date Range", [df['Order Date'].min(), df['Order Date'].max()])
+date_range = st.sidebar.date_input("Select Date Range", value = [df['Order Date'].min().date(), df['Order Date'].max().date()])
 #Region filter
 region = st.sidebar.multiselect("Select Region(s)", options=df['Region'].unique(), default=df['Region'].unique())
 #State filter
