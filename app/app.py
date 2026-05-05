@@ -3,6 +3,21 @@ import pandas as pd
 import plotly.express as px
 #App Layout
 st.set_page_config(page_title="Shipping Efficiency Dashboard", layout="wide")
+st.markdown("""
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap');
+
+/* Apply font globally */
+html, body, [class*="css"]  {
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* Make headings stand out */
+h1, h2, h3 {
+    font-weight: 600;
+}
+</style>
+""", unsafe_allow_html=True)
 st.title("🚚 Shipping Route Efficiency Dashboard")
 #Load Data
 @st.cache_data
