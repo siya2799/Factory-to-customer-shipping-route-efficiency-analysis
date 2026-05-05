@@ -116,16 +116,43 @@ with tab3:
         region_bottlenecks = region_kpi[(region_kpi['Route_Volume'] > region_kpi['Route_Volume'].quantile(0.75)) & (region_kpi['Delay_Frequency_RegionLevel'] > region_kpi['Delay_Frequency_RegionLevel'].quantile(0.75))]
         fig = px.scatter(region_bottlenecks, x='Route_Volume', y='Delay_Frequency_RegionLevel', size='Avg_Lead_Time', color='Route__Region', title='Region Bottlenecks')
         st.plotly_chart(fig, use_container_width=True)
+        st.subheader("Delay Composition")
+        region_delay = filtered_df.groupby('Region')['Is_Delayed'].mean().reset_index()
+        region_delay['On_Time'] = 1 - region_delay['Is_Delayed']
+        region_melt = region_delay.melt(
+        id_vars='Region',
+        value_vars=['Is_Delayed', 'On_Time'],
+        var_name='Status',
+        value_name='Percentage')
+        fig = px.pie(
+        region_melt,
+        names='Status',
+        values='Percentage',
+        color='Status',
+        title="Delay Distribution (Region Level)",
+        hole=0.5)
+        st.plotly_chart(fig, use_container_width=True)
     with subtab2:
         st.subheader("State-Level Bottlenecks")
         state_bottlenecks = state_kpi[(state_kpi['Route_Volume'] > state_kpi['Route_Volume'].quantile(0.75)) & (state_kpi['Delay_Frequency_StateLevel'] > state_kpi['Delay_Frequency_StateLevel'].quantile(0.75))]
         fig = px.scatter(state_bottlenecks, x='Route_Volume', y='Delay_Frequency_StateLevel', size='Avg_Lead_Time', color='Route__State', title='State Bottlenecks')
         st.plotly_chart(fig, use_container_width=True)
-#Delay composition 
-    delay_counts= filtered_df['Is_Delayed'].value_counts().reset_index()
-    delay_counts.columns = ['Is_Delayed', 'Count']
-    fig = px.pie(delay_counts, names='Is_Delayed', values='Count', title='Delayed vs On-time Shipments' , hole=0.5)
-    st.plotly_chart(fig, use_container_width=True)
+        st.subheader("Delay Composition")
+        state_delay = filtered_df.groupby('State/Province')['Is_Delayed'].mean().reset_index()
+        state_delay['On_Time'] = 1 - state_delay['Is_Delayed']
+        state_melt = state_delay.melt(
+        id_vars='State/Province',
+        value_vars=['Is_Delayed', 'On_Time'],
+        var_name='Status',
+        value_name='Percentage')
+        fig = px.pie(
+        state_melt,
+        names='Status',
+        values='Percentage',
+        color='Status',
+        title="Delay Distribution (State Level)",
+        hole=0.5)
+        st.plotly_chart(fig, use_container_width=True)
 #Ship Mode Comparison
 with tab4:
     st.header("🚚 Ship Mode Performance")
