@@ -63,7 +63,7 @@ filtered_df['Is_Delayed'] = filtered_df['Lead_Time'] > threshold
 #Merging state KPI table with state mapping for geographic visualizations
 state_kpi['State_Name'] = state_kpi['Route__State'].str.split(' → ').str[-1]
 state_kpi['Country'] = state_kpi['Route__State'].str.split(' → ').str[0]
-state_kpi_merge = state_kpi.merge(state_mapping_with_coords[['State/Province', 'Country', 'Lat', 'Lon']],left_on=['State_Name', 'Country'],right_on=['State/Province', 'Country'],how='left')
+state_kpi_merge = state_kpi.merge(state_mapping_with_coords[['State/Province', 'Country', 'Lat', 'Lon']],left_on=['State_Name', 'State_Code'],right_on=['State/Province', 'Country'],how='left')
 state_kpi_merge['Lat'] = pd.to_numeric(state_kpi_merge['Lat'], errors='coerce')
 state_kpi_merge['Lon'] = pd.to_numeric(state_kpi_merge['Lon'], errors='coerce')
 state_kpi_merge = state_kpi_merge.dropna(subset=['Lat', 'Lon'])
@@ -94,7 +94,7 @@ with tab1:
 #Geographic Shipping Map
 with tab2:
     st.subheader("🌍 Geographic Analysis - Shipping Efficiency")
-    fig = px.scatter_mapbox(state_kpi_merge,lat="Lat",lon="Lon",size="Route_Volume",color="Route_Efficiency_Score",text="State_Code",hover_name="State_Code",hover_data={"State_Name": True,"Route_Volume": True,"Route_Efficiency_Score": True},zoom=3,height=600,color_continuous_scale="RdYlGn", size_max=35)
+    fig = px.scatter_mapbox(state_kpi_merge,lat="Lat",lon="Lon",size="Route_Volume",color="Route_Efficiency_Score",text="State_Code",hover_name="State_Code",hover_data={"State_Name": True,"Route_Volume": True,"Avg_Lead_Time": True,"Route_Efficiency_Score": True},zoom=3,height=600,color_continuous_scale="RdYlGn", size_max=35)
     fig.update_traces(textposition='top center', marker=dict(opacity=0.8))
     fig.update_layout(mapbox_style="carto-positron")
     st.plotly_chart(fig, use_container_width=True)
